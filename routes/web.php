@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,9 +15,21 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('index');
 });
+Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
 
-Route::get('/home', 'HomeController@index')->name('home');
+Route::middleware("auth")
+  ->namespace("Admin") //namespace =  indica la cartella dove si trovano i controller
+  ->name("admin.") //name =  Aggiunge prima del nome di ogni rotta questo prefisso
+  ->prefix("admin") //prefix =  Aggiunge prima di ogni URI questo prefisso
+  ->group(function () {
+    Route::get('/', 'HomeController@index')->name('index');    
+    Route::resource("posts", "PostController");
+  });
+
+
+
+
